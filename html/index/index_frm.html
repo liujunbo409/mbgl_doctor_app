@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<style>
+  .header {
+      display: none;
+  }
+  .index-icon{
+    margin-top:48px;
+  }
+  .index-icon img {
+    margin:0 auto 5px auto
+  }
+	</style>
+</head>
+<body>
+  <!-- 头部 -->
+  <div id="header">
+      <div id="header_index_container" class="header">
+          <header id="header_index" class="aui-bar aui-bar-nav main-bg">
+              <a class="aui-pull-left aui-btn"></a>
+
+              <div class="aui-title grey-head-title drop-grey-font">首页</div>
+              <a class="aui-pull-left aui-btn"></a>
+          </header>
+      </div>
+
+      <div id="header_all_article_container" class="header">
+          <header id="header_all_article" class="aui-bar aui-bar-nav main-bg">
+              <a class="aui-pull-left aui-btn"></a>
+
+              <div class="aui-title grey-head-title drop-grey-font">系统文章</div>
+              <a class="aui-pull-left aui-btn"></a>
+          </header>
+      </div>
+
+      <div id="header_message_container" class="header">
+          <header id="header_message" class="aui-bar aui-bar-nav main-bg">
+              <a class="aui-pull-left aui-btn"></a>
+
+              <div class="aui-title grey-head-title drop-grey-font">消息</div>
+              <a class="aui-pull-left aui-btn"></a>
+          </header>
+      </div>
+
+      <div id="header_my_container" class="header">
+          <header id="header_my" class="aui-bar aui-bar-nav main-bg">
+              <a class="aui-pull-left aui-btn"></a>
+
+              <div id="customer_service" class="aui-title grey-head-title drop-grey-font">我的</div>
+              <a class="aui-pull-left aui-btn"></a>
+          </header>
+      </div>
+  </div>
+
+
+  <div>
+      <div class="aui-row aui-padded-b-10" style="background-color:#fff">
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_my.png" style="width:48px;height:48px;" onclick="clickMy()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">个人信息</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_apply.png" style="width:48px;height:48px;" onclick="clickApply()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">资格认证</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_visit_plan.png" style="width:48px;height:48px;" onclick="clickVisitPlan()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">出诊计划</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_shenhe_article.png" style="width:48px;height:48px;" onclick="clickShenheArticle()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">审核文章</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_all_article.png" style="width:48px;height:48px;" onclick="clickAllArticle()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">全部文章</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_use_article.png" style="width:48px;height:48px;" onclick="clickUseArticle()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">文章收藏</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_shenhe_question.png" style="width:48px;height:48px;" onclick="clickShenheQuestion()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">审核问答</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_all_question.png" style="width:48px;height:48px;" onclick="clickAllArticle()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">全部问答</div>
+          </div>
+          <div class="aui-col-xs-4 aui-text-center index-icon">
+              <img src="../../image/index_use_question.png" style="width:48px;height:48px;" onclick="clickTuanGou()">
+
+              <div class="aui-font-size-13 aui-margin-b-5">问答收藏</div>
+          </div>
+      </div>
+  </div>
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript" src="../../script/api-common.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+
+//点击个人信息
+function clickMy() {
+
+  if (localStorage.getItem('my_frm_open') == true) {
+      showFrame('my_index');
+
+  } else {
+      localStorage.setItem('my_frm_open','true')
+  api.execScript({
+      name: 'root',
+      script: "otherPageOpenTap('tab_my_father',3)"
+  });
+ }
+}
+
+//点击全部文章
+function clickAllArticle() {
+  if (localStorage.getItem('all_article_frm_open') == true) {
+      showFrame('all_article');
+    localStorage.setItem('all_article_frm_open','true');
+  } else {
+  api.execScript({
+      name: 'root',
+      script: "otherPageOpenTap('tab_all_article',1)"
+  });
+ }
+}
+function clickApply(){
+    openWin('apply_win', '../apply/', {}, 0, false)
+}
+</script>
+</html>

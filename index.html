@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="./css/common.css" />
+    <style type="text/css">
+            .header {
+                display: none;
+            }
+
+            .active {
+                display: block;
+            }
+
+            .aui-searchbar-input {
+                background-color: #f3f3f3;
+            }
+
+            .main-bg {
+                width: 100%;
+                background-repeat: no-repeat;
+                background-position: top;
+                background-size: 100%;
+            }
+
+            #tab_index, #tab_all_article, #tab_message,#tab_my {
+                margin: auto;
+            }
+
+            .aui-dialog-header {
+                padding: 0.5rem 0.75rem 0 0.75rem;
+                text-align: center;
+                font-size: 1rem;
+                color: #a94442;
+            }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+      <!-- 头部 -->
+      <div id="header">
+          <div id="header_index_container" class="header">
+              <header id="header_index" class="aui-bar aui-bar-nav main-bg">
+                  <a class="aui-pull-left aui-btn"></a>
+
+                  <div class="aui-title grey-head-title drop-grey-font">首页</div>
+                  <a class="aui-pull-left aui-btn"></a>
+              </header>
+          </div>
+
+          <div id="header_all_article_container" class="header">
+              <header id="header_all_article" class="aui-bar aui-bar-nav main-bg">
+                  <a class="aui-pull-left aui-btn"></a>
+
+                  <div class="aui-title grey-head-title drop-grey-font">系统文章</div>
+                  <a class="aui-pull-left aui-btn"></a>
+              </header>
+          </div>
+
+          <div id="header_message_container" class="header">
+              <header id="header_message" class="aui-bar aui-bar-nav main-bg">
+                  <a class="aui-pull-left aui-btn"></a>
+
+                  <div class="aui-title grey-head-title drop-grey-font">消息</div>
+                  <a class="aui-pull-left aui-btn"></a>
+              </header>
+          </div>
+
+          <div id="header_my_container" class="header">
+              <header id="header_my" class="aui-bar aui-bar-nav main-bg">
+                  <a class="aui-pull-left aui-btn"></a>
+
+                  <div id="customer_service" class="aui-title grey-head-title drop-grey-font">我的</div>
+                  <a class="aui-pull-left aui-btn"></a>
+              </header>
+          </div>
+      </div>
+
+
+
+
+<!-- 底部 -->
+      <div class="aui-bar aui-bar-tab aui-padded-t-5 aui-border-t"  id="footer" >
+          <div class="aui-bar-tab-item tab aui-active"  id='tab_index_father' onclick="openTap(this, 0)" tapmode>
+              <img id="tab_index" src="image/foot_index_fill.png" width="20" height="20" alt="">
+
+              <div class="aui-bar-tab-label aui-font-size-14">首页</div>
+          </div>
+
+          <div class="aui-bar-tab-item tab "  id='tab_all_article_father' onclick="openTap(this, 1)" tapmode>
+              <img id="tab_all_article" src="image/foot_all_article.png" width="20" height="20" alt="">
+
+              <div class="aui-bar-tab-label aui-font-size-14">内容</div>
+          </div>
+
+          <div class="aui-bar-tab-item tab" id='tab_message_father'  onclick="openTap(this, 2)" tapmode>
+              <img id="tab_message" src="image/foot_message.png" width="20" height="20" alt="">
+               <div class="aui-bar-tab-label aui-font-size-14">消息</div>
+              <div id="message_num" class="aui-badge aui-hide"></div>
+          </div>
+
+          <div class="aui-bar-tab-item tab" id='tab_my_father' onclick="openTap(this, 3)" tapmode>
+              <img id="tab_my" src="image/foot_my_info.png" width="20" height="20" alt="">
+
+              <div class="aui-bar-tab-label aui-font-size-14">我的</div>
+          </div>
+        </div>
+    </div>
+
+
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/jquery.min.js"></script>
+<script type="text/javascript" src="./script/api-common.js"></script>
+<script type="text/javascript" src="./script/common.js"></script>
+<script type="text/javascript">
+    var frm_index = -1           //index索引，初始时为-1
+    var footer_pos = null         //footer位置
+    var index_frm_open = false         //是否打开首页
+    var all_article_frm_open = false       //是否打开全部文章
+    var message_frm_open = false      //是否打开消息
+    var my_frm_open = false        //是否打开个人中心
+localStorage.setItem('index_frm_open','false')
+localStorage.setItem('all_article_frm_open','false')
+localStorage.setItem('message_frm_open','false')
+localStorage.setItem('my_frm_open','false')
+    apiready = function(){
+    footer_pos = _fixTabBar('footer')       //确定footer位置
+    init(); //初始化页面
+    };
+
+    //初始化页面
+    function init() {
+        //打开首页
+        openTap($('#footer div').first(), 0)
+    }
+
+    //点击底部栏
+    function openTap(el, index) {
+        console.log('openTap index is : ' + JSON.stringify(index))
+        var headers = $('header')
+        if (index !== frm_index) {
+            hideAllFrame();
+            switch (index) {
+                case 0:     //首页
+                    switchFooterBtn(el, index)
+                    //如果frm0已经打开，则showFrame即可
+                    if (localStorage.getItem('index_frm_open') == true) {
+                        showFrame('index_frm');
+                    } else {
+                      localStorage.setItem('index_frm_open','true')
+                        var headerPos = _fixStatusBar(headers.eq(index).attr('id'))
+                        // console.log('headerPos is : ' + JSON.stringify(headers.eq(index)))
+                        openFrameWithHeaderFooter('index_frm', './html/index/', headerPos.h, footer_pos.h, {}, true)
+                        resetIcons(index)
+                    }
+                    break
+                case 1:     //全部文章
+                    switchFooterBtn(el, index)
+                    //如果frm1已经打开，则showFrame即可
+                    if (localStorage.getItem('all_article_frm_open')  == true) {
+                        showFrame('all_article_list');
+                    } else {
+                      localStorage.setItem('all_article_frm_open','true')
+                        var headerPos = _fixStatusBar(headers.eq(index).attr('id'))
+                        // console.log('headerPos is : ' + JSON.stringify(headers.eq(index)))
+                        openFrameWithHeaderFooter('all_article_list', './html/all_article/', headerPos.h, footer_pos.h, {}, true)
+                        resetIcons(index)
+                    }
+                    break
+                case 2:     //消息
+                    switchFooterBtn(el, index)
+                    //如果frm1已经打开，则showFrame即可
+                    if (localStorage.getItem('message_frm_open') == true) {
+                        showFrame('message_list');
+                    } else {
+                      localStorage.setItem('message_frm_open','true')
+                        var headerPos = _fixStatusBar(headers.eq(index).attr('id'))
+                        // consoledebug.log('headerPos is : ' + JSON.stringify(headerPos))
+                        openFrameWithHeaderFooter('message_list', './html/message/', headerPos.h, footer_pos.h, {}, true)
+                        resetIcons(index)
+                    }
+                    break
+                case 3:     //我的
+                    switchFooterBtn(el, index)
+                    //如果frm1已经打开，则showFrame即可
+                    if (localStorage.getItem('message_frm_open') == true) {
+                        showFrame('my_index');
+
+                    } else {
+                      localStorage.setItem('my_frm_open','true')
+                        var headerPos = _fixStatusBar(headers.eq(index).attr('id'))
+                        // consoledebug.log('headerPos is : ' + JSON.stringify(headerPos))
+                        openFrameWithHeaderFooter('my_index', './html/my/', headerPos.h, footer_pos.h, {}, true)
+                        resetIcons(index)
+                    }
+                    break
+                default:
+                    break
+            }
+        }
+    }
+// 隐藏全部的framegroup的页面
+    function hideAllFrame() {
+        api.setFrameAttr({
+            name: 'index_frm',
+            hidden: true
+        })
+        api.setFrameAttr({
+            name: 'all_article_list',
+            hidden: true
+        })
+        api.setFrameAttr({
+            name: 'message_list',
+            hidden: true
+        })
+        api.setFrameAttr({
+            name: 'my_index',
+            hidden: true
+        })
+    }
+
+    function switchFooterBtn(el, index) {
+        $('.tab').each(function () {
+            $(this).removeClass('aui-active')
+        })
+        $(el).addClass('aui-active')
+        $('.header').each(function () {
+            $(this).removeClass('active')
+        })
+        $('.header').eq(index).addClass('active')
+        // resetIcons(index);      //重置图标
+        frm_index = index;      //设定当前frm的index值
+    }
+
+
+        /*
+         * 切换底部的图标
+         *
+         * By TerryQi
+         *
+         * 2018-04-29
+         */
+        function resetIcons(index) {
+            $("#tab_index").attr('src', './image/foot_index.png')
+            $("#tab_all_article").attr('src', './image/foot_all_article.png')
+            $("#tab_message").attr('src', './image/foot_message.png')
+            $("#tab_my").attr('src', './image/foot_my_info.png')
+
+            switch (index) {
+                case 0:
+                    $("#tab_index").attr('src', './image/foot_index_fill.png')
+                    break
+                case 1:
+                    $("#tab_all_article").attr('src', './image/foot_all_article_fill.png')
+                    break
+                case 2:
+                    $("#tab_message").attr('src', './image/foot_message_fill.png')
+                    api.sendEvent({
+                        name: 'message',
+                        extra: {}
+                    });
+                    break
+                case 3:
+                    $("#tab_my").attr('src', './image/foot_my_info_fill.png')
+                    break
+                default:
+                    break
+            }
+        }
+      // 其他页面按钮触发打开底部栏
+        function otherPageOpenTap(id,index){
+          var el=document.getElementById(id,index);
+          openTap(el,index)
+        }
+</script>
+</html>

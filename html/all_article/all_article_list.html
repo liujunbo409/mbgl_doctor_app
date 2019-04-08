@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+      <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+	<style>
+.list_icon {
+  width:10px;
+  height:10px;
+  display: inline;
+}
+	</style>
+</head>
+<body>
+<div id="message-content"></div>
+</body>
+<script id="message-content-template" type="text/x-dot-template">
+  <div class="aui-content aui-margin-b-15">
+      <ul class="aui-list aui-media-list" >
+      {{for(var z=0;z
+      <it.data.length ;z++){}}
+          <li class="aui-list-item aui-list-item-arrow">
+              <div class="aui-media-list-item-inner">
+                  <div class="aui-list-item-inner" style='width:100%'>
+                      <div class="aui-list-item-text">
+                          <div class="aui-list-item-title">{{=it.data[z].article.title}}</div>
+                      </div>
+                        <span class="left aui-list-item-text" style="width:30%;line-height: 1.2rem">颈椎病</span>
+                        <span class="right" style="width:20%" ><img src='../../image/look.png' class=list_icon>&nbsp;{{=it.data[z].article_data.doctor_show_num}}</span>
+                        <span class="right" style="width:20%"><img src='../../image/zan.png' class=list_icon>&nbsp;{{=it.data[z].article_data.accept_num}}</span>
+                        <span class="right" style="width:20%"><img src='../../image/use.png' class=list_icon>&nbsp;{{=it.data[z].article_data.used_num}}</span>
+                  </div>
+              </div>
+          </li>
+  {{}}}
+
+        </ul>
+      </div>
+  </script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/api-common.js"></script>
+<script type="text/javascript" src="../../script/api-manager.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+//入口函数
+apiready = function () {
+    api.parseTapmode();
+    init();
+}
+//初始化
+function init() {
+    test({mulu_id: "1"}, function (ret, err) {
+        if (ret.result) {
+            var ccc = ret.ret;
+                consoledebug.log( JSON.stringify(ccc));
+            var interText = doT.template($("#message-content-template").text());
+                $("#message-content").html(interText(ccc));
+        } else {
+            showToast(ret.message);
+        }
+    })
+}
+</script>
+</html>
