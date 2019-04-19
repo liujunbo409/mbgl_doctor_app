@@ -136,8 +136,17 @@ localStorage.setItem('my_frm_open','false')
 
     //初始化页面
     function init() {
-        //打开首页
-        openTap($('#footer div').first(), 0)
+        //获取doc_id
+        if(localStorage.getItem("doc_id") == "" || localStorage.getItem("doc_id") == null){
+          localStorage.setItem("doc_id", localStorage.getItem("doc_laravel_id"));
+        }
+        var doc_id = localStorage.getItem("doc_id");
+        if(doc_id == "" || doc_id == 'null'){
+          openWin('login_win','./html/login/', {}, 0);
+        }else{
+          //打开首页
+          openTap($('#footer div').first(), 0);
+        }
     }
 
     //点击底部栏
@@ -169,7 +178,7 @@ localStorage.setItem('my_frm_open','false')
                       localStorage.setItem('all_article_frm_open','true')
                         var headerPos = _fixStatusBar(headers.eq(index).attr('id'))
                         // console.log('headerPos is : ' + JSON.stringify(headers.eq(index)))
-                        openFrameWithHeaderFooter('all_article_list', './html/all_article/', headerPos.h, footer_pos.h, {}, true)
+                        openFrameWithHeaderFooter('all_article_list', './html/all_article/', headerPos.h, footer_pos.h, {}, false)
                         resetIcons(index)
                     }
                     break

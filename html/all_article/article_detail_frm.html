@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style>
+span, p{
+  display: inline;
+}
+</style>
+<body>
+  <input type="hidden" id="mulu_id">
+  <div id="article-detail"></div>
+  <div id="article-source"></div>
+  <div id="article-nexus"></div>
+  <div id="article-last"></div>
+  <div id="article-next"></div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/api-common.js"></script>
+<script type="text/javascript" src="../../script/api-manager.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+
+<script id="article-detail-template"  type="text/x-dot-template">
+<div class="aui-text-center aui-margin-15" style="font-weight: bold;">
+        <span class="font-size-18">{{=it.title}}({{=it.style_str}})
+        </span>
+    </div>
+    <div class="aui-text-left aui-margin-10 aui-text-default">
+        <span  style="font-size:0.55rem;color:#B3B3B3;">
+          {{=it.author}}&nbsp;&nbsp;{{=it.created_at}}
+        </span>
+    </div>
+    <div class="aui-padded-15 aui-text-left" style="font-weight:light;font-size:0.7rem;width:100%">
+      {{=it.html}}
+    </div>
+</script>
+
+<script id="article-source-template"  type="text/x-dot-template">
+<div class="aui-padded-15" style="font-weight:light;font-size:0.7rem">
+<div>参考文献</div>
+{{for(var i =0;i<it.ret.length;i++){}}
+<div>[{{=it.ret[i].sequence}}]{{=it.ret[i].source_text}}</div>
+{{}}}
+</div>
+</script>
+<script id ="article-nexus-template" type="text/x-dot-template">
+<div  class="aui-padded-15">关联文章：</div>
+{{for(var i =0;i<it.ret.length;i++){}}
+<div class="aui-padded-15">{{=it.ret[i].title}}</div>
+{{}}}
+</script>
+<script id ="article-last-template" type="text/x-dot-template">
+<div class="aui-padded-15">
+{{?it.id == 0}}
+<div>上一篇：<span style="color:#b3b3b3">{{=it.title}}<span>
+{{??}}
+<div>上一篇：<span onclick="gotoNearArticle('{{=it.id}}', '{{=it.ill_id}}')">{{=it.title}}<span>
+{{?}}
+</div>
+</script>
+<script id ="article-next-template" type="text/x-dot-template">
+<div class="aui-padded-15">
+{{?it.id == '0'}}
+<div>下一篇：<span style="color:#b3b3b3">{{=it.title}}<span>
+{{??}}
+<div>下一篇：<span onclick="gotoNearArticle('{{=it.id}}', '{{=it.ill_id}}')">{{=it.title}}<span>
+{{?}}
+</div>
+</script>
+<script>
+//入口函数
+apiready = function () {
+  //consoledebug.log(JSON.stringify(api.pageParam.data));
+    init();
+}
+//初始化
+function init(){
+  var article_id = api.pageParam.data.article_id;
+  var mulu_id = api.pageParam.data.mulu_id;
+  var ill_id = api.pageParam.data.ill_id;
+  $("#mulu_id").val(mulu_id);
+  //consoledebug.log(JSON.stringify(api.pageParam.data));
+  getArticleInfo(article_id, ill_id, mulu_id);
+}
+//获取文章相关信息
+function getArticleInfo(article_id, ill_id, mulu_id){
+  //获取文章详情
+  getArticleDetail({article_id : article_id, ill_id : ill_id, user_id :'35'},function(ret, err){
+    if(ret.result){
+      consoledebug.log(JSON.stringify(ret));
+      var article_detail = ret.ret;
+      var interText = doT.template($("#article-detail-template").text());
+          $("#article-detail").html(interText(article_detail));
+    }
+
+  })
+  //获取文章来源
+  getArticleSource({article_id : article_id},function(ret, err){
+    if(ret.result && ret.ret.length != 0){
+      //consoledebug.log(JSON.stringify(ret));
+      var article_source = ret.ret;
+      var interText = doT.template($("#article-source-template").text());
+          $("#article-source").html(interText(article_source));
+    }
+  })
+  //获取关联文章
+  getArticleNexus({article_id : article_id},function(ret, err){
+    if(ret.result && ret.ret.length != 0){
+      consoledebug.log(JSON.stringify(ret));
+      var article_nexus = ret.ret;
+      var interText = doT.template($("#article-nexus-template").text());
+          $("#article-nexus").html(interText(article_nexus));
+    }
+  })
+  //获取文章上一篇下一篇文章
+  if(mulu_id == '-1'){//入口：最近更新
+    //上一篇
+    getRecentArticleNear({article_id : article_id, type : 'next'},function(ret, err){
+      if(ret.result){
+      //  consoledebug.log(JSON.stringify(ret));
+        var article_last = ret.ret;
+        var interText = doT.template($("#article-last-template").text());
+            $("#article-last").html(interText(article_last));
+      }
+    })
+    //下一篇
+    getRecentArticleNear({article_id : article_id, type : 'last'},function(ret, err){
+      if(ret.result){
+        //consoledebug.log(JSON.stringify(ret));
+        var article_next = ret.ret;
+        var interText = doT.template($("#article-next-template").text());
+            $("#article-next").html(interText(article_next));
+      }
+    })
+  }else{//入口疾病下目录
+    //上一篇
+    getArticleNear({article_id : article_id, type : 'last', mulu_id : mulu_id},function(ret, err){
+      if(ret.result){
+        //consoledebug.log(JSON.stringify(ret));
+        var article_last = ret.ret;
+        var interText = doT.template($("#article-last-template").text());
+            $("#article-last").html(interText(article_last));
+      }
+    })
+    //下一篇
+    getArticleNear({article_id : article_id, type : 'next', mulu_id : mulu_id},function(ret, err){
+      if(ret.result){
+        //consoledebug.log(JSON.stringify(ret));
+        var article_next = ret.ret;
+        var interText = doT.template($("#article-next-template").text());
+            $("#article-next").html(interText(article_next));
+      }
+    })
+  }
+}
+function gotoNearArticle(article_id, ill_id){
+  var mulu_id = $("#mulu_id").val();
+  getArticleInfo(article_id, ill_id, mulu_id);
+}
+</script>
+</html>

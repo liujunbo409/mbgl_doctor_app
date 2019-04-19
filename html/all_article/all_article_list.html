@@ -8,39 +8,118 @@
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
       <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+      <link rel="stylesheet" type="text/css" href="../../css/zTreeStyle.css" />
 	<style>
 .list_icon {
   width:10px;
   height:10px;
   display: inline;
 }
+.ills{
+  	border-bottom: 1px solid #ccc;
+}
+.now-ill-mulu{
+  background-color:white;
+  height:43px;
+  line-height:43px;
+  padding-left:10px;
+  padding-right:10px;
+}
+.ztree * {font-size: 10pt;font-family: inherit}
+.ztree li ul{ margin:0; padding:0}
+.ztree li {line-height:30px; overflow: hidden;}
+.ztree li a {width:100%;height:30px;padding-top: 0px;}
+.ztree li a:hover {text-decoration:none; background-color: #E7E7E7;}
+.ztree li a span.button.switch {visibility:hidden}
+.ztree.showIcon li a span.button.switch {visibility:visible}
+.ztree li a.curSelectedNode {background-color:#D4D4D4;border:0;height:30px;}
+.ztree li span {line-height:30px;}
+.ztree li span.button {margin-top: -7px;}
+.ztree li span.button.switch {width: 16px;height: 16px;}
+
+.ztree li a.level0 span {font-size: 150%;}
+.ztree li span.button {background-image:url("../../image/left_menuForOutLook.png"); *background-image:url("../../image/left_menuForOutLook.gif")}
+.ztree li span.button.switch.level0 {width: 20px; height:20px}
+.ztree li span.button.switch.level1 {width: 20px; height:20px}
+.ztree li span.button.noline_open {background-position: 0 0;}
+.ztree li span.button.noline_close {background-position: -18px 0;}
+.ztree li span.button.noline_open.level0 {background-position: 0 -18px;}
+.ztree li span.button.noline_close.level0 {background-position: -18px -18px;}
 	</style>
 </head>
 <body>
-<div id="message-content"></div>
-</body>
-<script id="message-content-template" type="text/x-dot-template">
-  <div class="aui-content aui-margin-b-15">
-      <ul class="aui-list aui-media-list" >
-      {{for(var z=0;z
-      <it.data.length ;z++){}}
-          <li class="aui-list-item aui-list-item-arrow">
-              <div class="aui-media-list-item-inner">
-                  <div class="aui-list-item-inner" style='width:100%'>
-                      <div class="aui-list-item-text">
-                          <div class="aui-list-item-title">{{=it.data[z].article.title}}</div>
-                      </div>
-                        <span class="left aui-list-item-text" style="width:30%;line-height: 1.2rem">颈椎病</span>
-                        <span class="right" style="width:20%" ><img src='../../image/look.png' class=list_icon>&nbsp;{{=it.data[z].article_data.doctor_show_num}}</span>
-                        <span class="right" style="width:20%"><img src='../../image/zan.png' class=list_icon>&nbsp;{{=it.data[z].article_data.accept_num}}</span>
-                        <span class="right" style="width:20%"><img src='../../image/use.png' class=list_icon>&nbsp;{{=it.data[z].article_data.used_num}}</span>
-                  </div>
-              </div>
-          </li>
-  {{}}}
+  <input type="hidden" id="ill_id">
+  <input type="hidden" id="mulu_id">
+  <input type="hidden" id="ill_name">
+  <input type="hidden" id="mulu_name">
+  <div id="ills-header" style="top:0px;position:fixed;z-index:100;width:100%;height:50px;"></div>
+  <div id="recent-article" style="margin-top:43px"></div>
+  <div id="ill-mulus" style="margin-top:43px;display:none">
+    <input type="text" id="ztree_search" value="" placeholder="请输入要搜索的目录名" />
+    <div class="zTreeDemoBackground" style="background-color:white">
+        <ul id="treeDemo" class="ztree"></ul>
+    </div>
+  </div>
+  <div id="ill-articles"  style="margin-top:43px">
 
-        </ul>
-      </div>
+  </div>
+</body>
+<script id="ills-header-template" type="text/x-dot-template">
+    <ul class="aui-list aui-media-list">
+        <li class="aui-list-item:last-child">
+            <div class="aui-tab" id="tab">
+                <div class="aui-tab-item aui-active ills" onclick="selectill(this, '0', '')">最近更新</div>
+                {{for(var z=0;z<it.ret.length ;z++){}}
+                <div class="aui-tab-item ills" onclick="selectill(this, '{{=it.ret[z].id}}', '{{=it.ret[z].name}}')" >{{=it.ret[z].name}}</div>
+                {{}}}
+            </div>
+        </li>
+    </ul>
+</div>
+  </script>
+  <script id="recent-article-template" type="text/x-dot-template">
+  <div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list">
+        {{for(var z=0;z<it.data.length ;z++){}}
+        <li class="aui-list-item aui-list-item-arrow" >
+            <div class="aui-media-list-item-inner" onclick="gotoArticle('{{=it.data[z].article_id}}','{{=it.data[z].ill_id}}','recent_article')">
+                <div class="aui-list-item-inner" style='width:100%'>
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title">{{=it.data[z].article.title}}</div>
+                    </div>
+                    <span class="left aui-list-item-text" style="width:30%;line-height: 1.2rem">{{=it.data[z].ill_name}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/look.png' class=list_icon>&nbsp;{{=it.data[z].article_data.doctor_show_num}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/zan.png' class=list_icon>&nbsp;{{=it.data[z].article_data.accept_num}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/use.png' class=list_icon>&nbsp;{{=it.data[z].article_data.used_num}}</span>
+                </div>
+            </div>
+            </li>
+            {{}}}
+    </ul>
+</div>
+  </script>
+  <script id="ill-articles-template" type="text/x-dot-template">
+  <div class="now-ill-mulu"><span>当前目录：<span id="ill_catalog_name"></span></span><span style="color:#03a9f4;float:right" onclick="returnToMulu()">返回目录</span></div>
+  <input type="text" id="search_word" value="" placeholder="请输入要搜索的文章题目" onblur="articleSearch();"/>
+  <div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list">
+        {{for(var z=0;z<it.data.length ;z++){}}
+        <li class="aui-list-item aui-list-item-arrow" >
+            <div class="aui-media-list-item-inner" onclick="gotoArticle('{{=it.data[z].article_id}}','{{=it.data[z].ill_id}}', 'ill_article')">
+                <div class="aui-list-item-inner" style='width:100%'>
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title">{{=it.data[z].article.title}}</div>
+                    </div>
+                    <span class="left aui-list-item-text" style="width:30%;line-height: 1.2rem">{{=it.data[z].ill_name}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/look.png' class=list_icon>&nbsp;{{=it.data[z].article_data.doctor_show_num}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/zan.png' class=list_icon>&nbsp;{{=it.data[z].article_data.accept_num}}</span>
+                    <span class="right" style="width:20%"><img src='../../image/use.png' class=list_icon>&nbsp;{{=it.data[z].article_data.used_num}}</span>
+                </div>
+            </div>
+            </li>
+            {{}}}
+    </ul>
+  </div>
   </script>
 
 <script type="text/javascript" src="../../script/api.js"></script>
@@ -49,24 +128,161 @@
 <script type="text/javascript" src="../../script/api-common.js"></script>
 <script type="text/javascript" src="../../script/api-manager.js"></script>
 <script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.ztree.all.min.js"></script>
+<script type="text/javascript" src="../../script/fuzzysearch.js"></script>
+<script type="text/javascript" src="../../script/jquery.ztree.exhide.js"></script>
 <script type="text/javascript">
 //入口函数
 apiready = function () {
-    api.parseTapmode();
+    //api.parseTapmode();
     init();
+
 }
+//以下为Ztree相关
+var curMenu = null, zTree_Menu = null;
+
+		var setting = {
+			view: {
+				showLine: false,
+				showIcon: true,
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+      edit: {
+        enable: false,
+        editNameSelectAll: false
+      },
+			callback: {
+			}
+		};
 //初始化
 function init() {
-    test({mulu_id: "1"}, function (ret, err) {
-        if (ret.result) {
-            var ccc = ret.ret;
-                consoledebug.log( JSON.stringify(ccc));
-            var interText = doT.template($("#message-content-template").text());
-                $("#message-content").html(interText(ccc));
-        } else {
-            showToast(ret.message);
-        }
+  //疾病列表
+    getBaseIllList({}, function(ret, err){
+      if (ret.result) {
+        var ills = ret;
+        //consoledebug.log( JSON.stringify(ills));
+        var innerText = doT.template($("#ills-header-template").text());
+        $("#ills-header").html(innerText(ills));
+      }
     })
+    //最近更新
+    getRecentUpdateArticles({}, function(ret, err){
+      if (ret.result) {
+          var recentarticles = ret.ret;
+        //consoledebug.log( JSON.stringify(recentarticles));
+          var interText = doT.template($("#recent-article-template").text());
+              $("#recent-article").html(interText(recentarticles));
+      } else {
+          showToast(ret.message);
+      }
+    })
+}
+//选择疾病
+function selectill(tabItem, ill_id, ill_name){
+  //选中时样式
+  if($(tabItem).hasClass('aui-active')){
+    //consoledebug.log('You cunzai');
+    return false;
+  }
+  //移除上一个选中的样式，给点击的添加选中样式
+  tabItem.parentNode.querySelector(".aui-active").classList.remove("aui-active");
+  tabItem.classList.add("aui-active");
+  $("#ill_id").val(ill_id);
+  $("#ill_name").val(ill_name);
+  if(ill_id == '0'){
+    //最近更新
+    getRecentUpdateArticles({}, function(ret, err){
+      if (ret.result) {
+          var recentarticles = ret.ret;
+            //  consoledebug.log( JSON.stringify(recentarticles));
+          var interText = doT.template($("#recent-article-template").text());
+              $("#recent-article").html(interText(recentarticles));
+              $("#ill-mulus").css('display','none');
+      } else {
+          showToast(ret.message);
+      }
+    })
+  }else{
+    //疾病下目录
+    $("#recent-article").html('');
+    $("#ill-articles").html('');
+    getIllMuluList({ill_id : ill_id}, function(ret, err){
+      //consoledebug.log( JSON.stringify(ret.ret));
+      if(ret.result){
+        //consoledebug.log(JSON.stringify(ret.ret));
+        var treeObj = $("#treeDemo");
+        var nodes = [];
+        for(var i=0;i<ret.ret.length;i++){
+          var obj = {id : ret.ret[i].id, pId : ret.ret[i].father_id,name:ret.ret[i].catalog_name, click : "openMulu("+ret.ret[i].id+", '"+ret.ret[i].catalog_name+"')"};
+          nodes.push(obj);
+        }
+        $.fn.zTree.init(treeObj, setting, nodes);
+        $("#ztree_search").val('');
+        fuzzySearch('treeDemo','#ztree_search',null,true); //初始化模糊搜索方法
+        zTree_Menu = $.fn.zTree.getZTreeObj("treeDemo");
+        treeObj.addClass("showIcon");
+        $("#ill-mulus").css('display','block');
+      }
+    })
+  }
+}
+//目录下文章列表
+function openMulu(mulu_id, mulu_name){
+  $("#mulu_id").val(mulu_id);
+  $("#mulu_name").val(mulu_name);
+  getMuluArticleList({mulu_id : mulu_id}, function(ret, err){
+    //consoledebug.log( JSON.stringify(ret.ret));
+    if (ret.result) {
+        var mulu_articles = ret.ret;
+          //  consoledebug.log( JSON.stringify(recentarticles));
+        var interText = doT.template($("#ill-articles-template").text());
+            $("#ill-articles").html(interText(mulu_articles));
+            var ill_name = $("#ill_name").val();
+            $("#ill_catalog_name").text(ill_name+'-'+mulu_name);
+            $("#ill-mulus").css('display','none');
+    } else {
+        showToast(ret.message);
+    }
+  })
+}
+//按文章名搜索文章
+function articleSearch(){
+  var search_word = $("#search_word").val();
+  var mulu_id = $("#mulu_id").val();
+  getMuluArticleList({mulu_id : mulu_id, search_word : search_word}, function(ret, err){
+    //consoledebug.log( JSON.stringify(ret.ret));
+    if (ret.result) {
+        var mulu_articles = ret.ret;
+          //  consoledebug.log( JSON.stringify(recentarticles));
+        var interText = doT.template($("#ill-articles-template").text());
+            $("#ill-articles").html(interText(mulu_articles));
+            $("#ill_catalog_name").text($("#ill_name").val()+'-'+$("#mulu_name").val());
+            $("#ill-mulus").css('display','none');
+    } else {
+        showToast(ret.message);
+    }
+  })
+}
+//返回到目录
+function returnToMulu(){
+  var ill_id = $("#ill_id");
+  $("#recent-article").html('');
+  $("#ill-articles").html('');
+  $("#ill-mulus").css('display','block');
+}
+function gotoArticle(article_id, ill_id, type){
+  if(type == 'ill_article'){
+    var user_id = '35';
+    var mulu_id = $("#mulu_id").val();
+    openWin('article_detail_win','./', {article_id : article_id,ill_id : ill_id,user_id: user_id, mulu_id : mulu_id}, 0, false);
+  }else if (type == 'recent_article') {
+    openWin('article_detail_win','./', {article_id : article_id,ill_id : ill_id,user_id: user_id, mulu_id : '-1'}, 0, false);
+  }
+
 }
 </script>
 </html>

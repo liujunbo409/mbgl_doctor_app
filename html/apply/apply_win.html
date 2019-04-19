@@ -7,37 +7,59 @@
     <title>Hello APP</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/zTreeStyle.css" />
 	<style>
+.list_icon {
+  width:10px;
+  height:10px;
+  display: inline;
+}
+.ztree * {font-size: 10pt;font-family:"Microsoft Yahei",Verdana,Simsun,"Segoe UI Web Light","Segoe UI Light","Segoe UI Web Regular","Segoe UI","Segoe UI Symbol","Helvetica Neue",Arial}
+.ztree li ul{ margin:0; padding:0}
+.ztree li {line-height:30px;}
+.ztree li a {width:200px;height:30px;padding-top: 0px;}
+.ztree li a:hover {text-decoration:none; background-color: #E7E7E7;}
+.ztree li a span.button.switch {visibility:hidden}
+.ztree.showIcon li a span.button.switch {visibility:visible}
+.ztree li a.curSelectedNode {background-color:#D4D4D4;border:0;height:30px;}
+.ztree li span {line-height:30px;}
+.ztree li span.button {margin-top: -7px;}
+.ztree li span.button.switch {width: 16px;height: 16px;}
 
+.ztree li a.level0 span {font-size: 150%;font-weight: bold;}
+.ztree li span.button {background-image:url("../../image/left_menuForOutLook.png"); *background-image:url("../../image/left_menuForOutLook.gif")}
+.ztree li span.button.switch.level0 {width: 20px; height:20px}
+.ztree li span.button.switch.level1 {width: 20px; height:20px}
+.ztree li span.button.noline_open {background-position: 0 0;}
+.ztree li span.button.noline_close {background-position: -18px 0;}
+.ztree li span.button.noline_open.level0 {background-position: 0 -18px;}
+.ztree li span.button.noline_close.level0 {background-position: -18px -18px;}
 	</style>
 </head>
 <body>
-  <div class="aui-content aui-margin-b-15">
-      <ul class="aui-list aui-media-list">
-          <!-- <li class="aui-list-header">
-              图文列表
-          </li> -->
-          <li class="aui-list-item aui-list-item-arrow">
-              <div class="aui-media-list-item-inner">
-                  <div class="aui-list-item-inner">
-                      <div class="aui-list-item-text">
-                          <div class="aui-list-item-title">账号管理</div>
-                          <!-- <div class="aui-list-item-right">08:00</div> -->
-                      </div>
-                      <!-- <div class="aui-list-item-text aui-ellipsis-2">
-                          这里是内容区域，新版中的列表布局可以很轻松的帮助开发者完成常见列表样式。
-                      </div> -->
-                  </div>
-              </div>
-          </li>
-        </ul>
-      </div>
+  <div class="zTreeDemoBackground left">
+		<ul id="treeDemo" class="ztree"></ul>
+	</div>
+<div id="message-content" style="background-color:red;"></div>
+<div id="message-content_ccc" style="background-color:red;">1</div>
 </body>
+<script id="message-content-template_ccc" type="text/x-dot-template">
+  <div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list">
+    我我我我我我
+    </ul>
+</div>
+  </script>
+
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/api-common.js"></script>
 <script type="text/javascript" src="../../script/api-manager.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/aui-tab.js" ></script>
+<script type="text/javascript" src="../../script/jquery.ztree.all.min.js"></script>
 <script type="text/javascript">
 //入口函数
 apiready = function () {
@@ -46,17 +68,71 @@ apiready = function () {
 }
 //初始化
 function init() {
-    test({type: "aboutus"}, function (ret, err) {
-        if (ret.result) {
-          JSON.stringify(ret)
-            // var msgObj = ret.ret;
-            // tel = msgObj.remark1;
-            // var interText = doT.template($("#message-content-template").text());
-            // $("#message-content").html(interText(msgObj));
-        } else {
-            showToast(ret.message);
-        }
-    })
+
+  getIllMuluList({ill_id : 18}, function(ret, err){
+    if(ret.result){
+      //consoledebug.log(JSON.stringify(ret.ret));
+      var treeObj = $("#treeDemo");
+      var nodes = [];
+      for(var i=0;i<ret.ret.length;i++){
+        var obj = {id : ret.ret[i].id, pId : ret.ret[i].father_id,name:ret.ret[i].catalog_name};
+        nodes.push(obj);
+      }
+      // var zNodes = toTree(ret.ret);
+      //consoledebug.log(JSON.stringify(nodes));
+      $.fn.zTree.init(treeObj, setting, nodes);
+      zTree_Menu = $.fn.zTree.getZTreeObj("treeDemo");
+      // curMenu = zTree_Menu.getNodes()[0].children[0].children[0];
+      zTree_Menu.selectNode(curMenu);
+      treeObj.addClass("showIcon");
+    }
+  })
+  var interText = doT.template($("message-content-template_ccc").text());
+  $("#message-content_ccc").html(interText);
 }
+var curMenu = null, zTree_Menu = null;
+		var setting = {
+			view: {
+				showLine: false,
+				showIcon: true,
+				selectedMulti: false,
+				dblClickExpand: false,
+				addDiyDom: addDiyDom
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				beforeClick: beforeClick
+			}
+		};
+
+		var zNodes =[
+       {id:60,pId:0,name:"222"},{id:3,pId:60,name:"糖尿病高危因素"},
+		];
+
+		function addDiyDom(treeId, treeNode) {
+			var spaceWidth = 5;
+			var switchObj = $("#" + treeNode.tId + "_switch"),
+			icoObj = $("#" + treeNode.tId + "_ico");
+			switchObj.remove();
+			icoObj.before(switchObj);
+
+			if (treeNode.level > 1) {
+				var spaceStr = "<span style='display: inline-block;width:" + (spaceWidth * treeNode.level)+ "px'></span>";
+				switchObj.before(spaceStr);
+			}
+		}
+
+		function beforeClick(treeId, treeNode) {
+			if (treeNode.level == 0 ) {
+				var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+				zTree.expandNode(treeNode);
+				return false;
+			}
+			return true;
+		}
 </script>
 </html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+
+
+    .active {
+        display: block;
+    }
+
+    .aui-searchbar-input {
+        background-color: #f3f3f3;
+    }
+
+    .main-bg {
+        width: 100%;
+        background-repeat: no-repeat;
+        background-position: top;
+        background-size: 100%;
+    }
+
+    #tab_index, #tab_all_article, #tab_message,#tab_my {
+        margin: auto;
+    }
+
+    .aui-dialog-header {
+        padding: 0.5rem 0.75rem 0 0.75rem;
+        text-align: center;
+        font-size: 1rem;
+        color: #a94442;
+    }
+    </style>
+</head>
+
+<body>
+  <!-- 头部 -->
+  <div id="header"  class="aui-bar aui-bar-nav main-bg">
+      <div id="header_article_detail_container" class="header">
+          <header id="header_index" class="aui-bar aui-bar-nav main-bg">
+              <a class="aui-pull-left aui-btn"></a>
+              <div class="aui-title grey-head-title drop-grey-font">文章详情</div>
+              <a class="aui-pull-left aui-btn"></a>
+          </header>
+      </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/api-common.js"></script>
+<script type="text/javascript" src="../../script/api-manager.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script>
+//入口函数
+    apiready = function () {
+       _fixStatusBar('header');
+        //consoledebug.log("order_detail_win api.pageParam:" + JSON.stringify(api.pageParam));
+        openFrame('article_detail_frm', './', true, api.pageParam.data, 0);
+
+    }
+</script>
+</html>

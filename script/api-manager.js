@@ -152,6 +152,42 @@ function Ajax(param, url, method, callBack, loading_flag) {
 }
 
 // 登陆
-function test(param, callBack) {
+function api_login(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/login/login', 'post', callBack, true)
+}
+//最近更新文章
+function getRecentUpdateArticles(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/newArticleList', 'get', callBack, true)
+}
+//获取基础疾病列表
+function getBaseIllList(param, callBack) {
+    Ajax(param, SERVER_URL + 'common/baseIllList', 'get', callBack, false)
+}
+//获取疾病下目录
+function getIllMuluList(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/mulu', 'get', callBack, true)
+}
+//获取目录下文章
+function getMuluArticleList(param, callBack) {
     Ajax(param, SERVER_URL + 'doctor/article/articleList', 'get', callBack, true)
+}
+//获取文章详情
+function getArticleDetail(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/article', 'get', callBack, true)
+}
+//获取文章来源
+function getArticleSource(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/source', 'get', callBack, false)
+}
+//获取文章关联文章
+function getArticleNexus(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/nexus', 'get', callBack, false)
+}
+//获取目录下文章上一篇下一篇
+function getArticleNear(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/nearArticle', 'get', callBack, false)
+}
+//获取最近更新文章上一篇下一篇
+function getRecentArticleNear(param, callBack) {
+    Ajax(param, SERVER_URL + 'doctor/article/newNearArticle', 'get', callBack, false)
 }
