@@ -89,6 +89,7 @@ function init(){
   var ill_id = api.pageParam.data.ill_id;
   $("#mulu_id").val(mulu_id);
   //consoledebug.log(JSON.stringify(api.pageParam.data));
+  //获取文章相关信息
   getArticleInfo(article_id, ill_id, mulu_id);
 }
 //获取文章相关信息
@@ -115,7 +116,7 @@ function getArticleInfo(article_id, ill_id, mulu_id){
   //获取关联文章
   getArticleNexus({article_id : article_id},function(ret, err){
     if(ret.result && ret.ret.length != 0){
-      consoledebug.log(JSON.stringify(ret));
+      //consoledebug.log(JSON.stringify(ret));
       var article_nexus = ret.ret;
       var interText = doT.template($("#article-nexus-template").text());
           $("#article-nexus").html(interText(article_nexus));
@@ -141,7 +142,7 @@ function getArticleInfo(article_id, ill_id, mulu_id){
             $("#article-next").html(interText(article_next));
       }
     })
-  }else{//入口疾病下目录
+  }else{//入口：疾病下目录
     //上一篇
     getArticleNear({article_id : article_id, type : 'last', mulu_id : mulu_id},function(ret, err){
       if(ret.result){
@@ -162,6 +163,7 @@ function getArticleInfo(article_id, ill_id, mulu_id){
     })
   }
 }
+//查看上一篇/下一篇文章
 function gotoNearArticle(article_id, ill_id){
   var mulu_id = $("#mulu_id").val();
   getArticleInfo(article_id, ill_id, mulu_id);

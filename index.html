@@ -142,7 +142,9 @@ localStorage.setItem('my_frm_open','false')
         }
         var doc_id = localStorage.getItem("doc_id");
         if(doc_id == "" || doc_id == 'null'){
-          openWin('login_win','./html/login/', {}, 0);
+          consoledebug.log(this.window.name);
+          openWinNotSlidBack('login_win','./html/login/', {}, 0, false);
+          closeWin('index');
         }else{
           //打开首页
           openTap($('#footer div').first(), 0);

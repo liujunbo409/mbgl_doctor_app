@@ -73,6 +73,7 @@ function login(){
   var phonenum = $("#phonenum").val();
   var password = $("#password").val();
   var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+  //校验
   if(!phonenum){
     $("#err_msg").text("*手机号不能为空");
     return false;
@@ -89,12 +90,24 @@ function login(){
             localStorage.setItem("doc_id", ret.ret.id);
             localStorage.setItem("role", ret.ret.role);
             localStorage.setItem("doctor", JSON.stringify(ret.ret));
-            reopenWin('index','../',{}, 0);
+            refreshIndex();
+            setTimeout(function () {
+                api.closeToWin({
+                    name: 'root'
+                });
+            }, 500);
       } else {
           showToast(ret.message);
       }
 
     })
+}
+function refreshIndex() {
+    var jsfun = 'login();';
+    api.execScript({
+        name: 'root',
+        script: jsfun
+    });
 }
 </script>
 </html>

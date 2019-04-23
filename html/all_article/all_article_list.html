@@ -214,6 +214,7 @@ function selectill(tabItem, ill_id, ill_name){
       //consoledebug.log( JSON.stringify(ret.ret));
       if(ret.result){
         //consoledebug.log(JSON.stringify(ret.ret));
+        //给目录之树赋值
         var treeObj = $("#treeDemo");
         var nodes = [];
         for(var i=0;i<ret.ret.length;i++){
@@ -274,6 +275,7 @@ function returnToMulu(){
   $("#ill-articles").html('');
   $("#ill-mulus").css('display','block');
 }
+//查看文章の详情
 function gotoArticle(article_id, ill_id, type){
   if(type == 'ill_article'){
     var user_id = '35';
